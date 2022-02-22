@@ -3,8 +3,7 @@ const app = express()
 const server = require('http').createServer(app)
 const io = require('socket.io')(server)
 
-var session = require('express-session');
-const flash = require('connect-flash');
+const session = require('express-session');
 
 const { randId } = require('./utilities/utilities.js')
 
@@ -18,10 +17,8 @@ app.use(express.json())
 app.use(session({
     secret: "secret key",
     resave: false,
-    saveUninitialized: true,
+    saveUninitialized: false,
 }));
-app.use(flash());
-
 
 app.get('/', (req, res) => {
     return res.render('index')
@@ -31,7 +28,7 @@ app.post('/createRoom', (req, res) => {
     const host = req.body.host
     const roomId = randId(6)
     rooms[roomId] = []
-    req.flash('username', host)
+    req.session.username = host
     res.json({ "roomId": roomId })
 })
 
@@ -44,24 +41,33 @@ app.post('/join', (req, res) => {
     if (rooms[roomId].length == 2)
         return res.status(400).json({ "msg": "Room is already populated!" })
 
-    if (req.flash('username').length == 0)
-        req.flash('username', username)
+    req.session.username = username
     io.to(roomId).emit('request', username, socketId)
     return res.status(200).json({ "msg": "request sent, awaiting approval..." })
 })
 
 app.get('/:roomId', (req, res) => {
     const roomId = req.params.roomId
-    return res.render('room', { "roomId": roomId, "username": req.flash('username') })
+    return res.render('room', { "roomId": roomId, "username": req.session.username })
 })
 
 server.listen(3000, console.log("Server is listening on PORT 3000..."))
 
 io.on("connection", socket => {
     socket.on("join-room", (roomId, username) => {
-        rooms[roomId].push(username)
+        if (!rooms[roomId])
+            return
+
+        // // if page is reloaded
+        if (rooms[roomId].indexOf(username) == -1)
+            rooms[roomId].push(username)
+
         socket.join(roomId)
         socket.broadcast.to(roomId).emit("user-connected", username)
+
+        if (rooms[roomId].length == 2) {
+            io.to(roomId).emit("game-started", rooms[roomId])
+        }
     })
 
     socket.on("approval", (approved, socketId) => {
