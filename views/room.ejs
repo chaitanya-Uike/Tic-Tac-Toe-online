@@ -6,14 +6,28 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tic Tac Toe</title>
-    <script> const roomId = "<%= roomId %>"</script>
+    <script>
+        const roomId = "<%= roomId %>"
+        const username = "<%= username %>"    
+    </script>
     <script src="/socket.io/socket.io.js" defer></script>
     <script src="/js/room.js" defer></script>
+
+    <link rel="stylesheet" href="/css/room.css">
 </head>
 
 <body>
-    <h1>Room Id <%=roomId %>
+    <h1>username: <%= username %>
     </h1>
+    <h1>Room Id: <%=roomId %>
+    </h1>
+    <div id="request-alert-div">
+        <h1></h1>
+        <p>wants to join</p>
+        <button id="accept">accept</button>
+        <button id="reject">reject</button>
+    </div>
+
 </body>
 
 </html>

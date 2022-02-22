@@ -4,22 +4,7 @@ const usernameField = document.querySelector("#username")
 const roomIdField = document.querySelector("#roomId")
 const infoCard = document.querySelector("#info-card")
 
-
-// room join logic
-joinBtn.addEventListener("click", async e => {
-    if (!checkUsername())
-        return
-    const roomAvail = await checkRoomId()
-    if (!roomAvail)
-        return
-
-    const roomId = roomIdField.value
-    joinRoom(roomId)
-})
-
-function joinRoom(roomId) {
-    window.location.href = `/${roomId}`
-}
+const socket = io('/')
 
 function checkUsername() {
     if (!usernameField.value) {
@@ -29,42 +14,70 @@ function checkUsername() {
     return true
 }
 
-async function checkRoomId() {
+function checkRoomId() {
     const roomId = roomIdField.value
     if (roomId.length != 6) {
         displayinfo("Room id is invalid!")
         return false
     }
-
-    const res = await fetch(`/checkRoomId/${roomId}`)
-    const data = await res.json()
-
-    displayinfo(data.msg)
-
-    if (res.ok)
-        return true
-
-    return false
-
+    return true
 }
 
-// create btm logic
-createBtn.addEventListener("click", async e => {
+createBtn.addEventListener("click", async () => {
     if (!checkUsername())
         return
 
-    const res = await fetch('/createRoom')
+    const res = await fetch('/createRoom', {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            "host": usernameField.value,
+        })
+    })
+
     const data = await res.json()
+    const roomId = data.roomId
 
-    if (!res.ok) {
-        displayinfo(data.msg)
-        return
-    }
-
-    window.location.href = `/${data.roomId}`
-
+    window.location.href = `/${roomId}`
 })
 
+
+joinBtn.addEventListener("click", async () => {
+    if (!checkUsername())
+        return
+    if (!checkRoomId())
+        return
+
+    const res = await fetch('/join', {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            "roomId": roomIdField.value,
+            "username": usernameField.value,
+            "socketId": socket.id,
+        })
+    })
+
+    const data = await res.json()
+    displayinfo(data.msg)
+
+    if (!res.ok)
+        return
+
+    socket.on("enter-room", approved => {
+        if (approved)
+            window.location.href = `/${roomIdField.value}`
+        else
+            displayinfo("request rejected")
+    })
+    // if (res.ok)
+    //     window.location.href = `/${roomIdField.value}`
+
+})
 function displayinfo(msg) {
     infoCard.style.display = "inline-block"
     infoCard.querySelector("p").innerText = msg

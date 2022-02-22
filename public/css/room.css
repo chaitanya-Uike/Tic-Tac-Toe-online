@@ -1,0 +1,11 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+
+#request-alert-div{
+    display: none;
+    border: 1px solid black;
+    padding: 10px;
+    width: fit-content;
+}
