@@ -85,4 +85,16 @@ io.on("connection", socket => {
     socket.on("won", (roomId) => {
         socket.to(roomId).emit("opponent-won")
     })
+
+    socket.on("tie", roomId => {
+        socket.to(roomId).emit("match-tied")
+    })
+
+    socket.on("clear-board", roomId => {
+        socket.to(roomId).emit("clear")
+    })
+
+    socket.on("reset", roomId => {
+        socket.to(roomId).emit("reset-game")
+    })
 })

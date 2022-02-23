@@ -44,6 +44,7 @@ socket.on("register-move", id => {
     else
         char = "X";
     document.getElementById(id).innerText = char
+    count++
 })
 
 socket.on("change-player", () => {
@@ -55,6 +56,11 @@ socket.on("opponent-won", () => {
     alerts.innerText = `${opponent} won !`;
     p2++;
     document.getElementById("scores").innerText = `${p1} / ${p2}`;
+    document.getElementById("btn").style.display = "block"
+})
+
+socket.on("match-tied", () => {
+    alerts.innerText = "It's a Tie";
 })
 
 function play() {
@@ -77,6 +83,18 @@ socket.on("game-started", users => {
     main.style.display = "grid"
 
     play()
+})
+
+socket.on("clear", () => {
+    resetBoard()
+    document.getElementById("btn").style.display = ""
+})
+
+socket.on("reset-game", () => {
+    p1 = 0;
+    p2 = 0;
+    document.getElementById("scores").innerText = "0 / 0";
+    resetBoard();
 })
 
 
@@ -125,6 +143,7 @@ let won;
 let p1 = 0, p2 = 0;
 
 function resetBoard() {
+    document.getElementById("btn").style.display = ""
     count = 0
     turnFlag = false
     won = false
@@ -203,6 +222,7 @@ function clicked(box) {
         check()
 
         if (won) {
+            document.getElementById("btn").style.display = "block"
             socket.emit("won", roomId)
             return
         }
@@ -213,6 +233,8 @@ function clicked(box) {
 
         if (count >= 9) {
             alerts.innerText = "It's a Tie";
+            socket.emit("tie", roomId)
+            return
         }
 
         socket.emit("turn-change", roomId)
@@ -227,11 +249,15 @@ Array.from(cards).forEach(card => {
     })
 })
 
-document.getElementById("btn").addEventListener("click", resetBoard);
+document.getElementById("btn").addEventListener("click", () => {
+    resetBoard()
+    socket.emit("clear-board", roomId)
+});
 
 document.getElementById("reset").addEventListener("click", function () {
     p1 = 0;
     p2 = 0;
     document.getElementById("scores").innerText = "0 / 0";
     resetBoard();
+    socket.emit("reset", roomId)
 })

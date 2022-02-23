@@ -14,7 +14,7 @@ html{
 body{
     position: relative;
     height: 100vh;
-    background-color: #EAEAEA;
+    /* background-color: #08D9D6; */
 }
 
 header{
@@ -35,13 +35,13 @@ nav{
 #game-reset{
     position: absolute;
     left: 10px;
-    top: 30px;
+    top: 25px;
 }
 
 #roomId{
     position: absolute;
     right: 30px;
-    top: 30px;
+    top: 25px;
     background-color: #FF2E63;
     color: white;
     padding: 5px 10px;
@@ -78,13 +78,13 @@ main{
     bottom: 4rem;
     height: 10rem;
     width: 10rem;
-    background-color: #FF5C58;
+    background-color: #FF2E63;
     display: grid;
     place-items: center;
     border-radius: 1rem;
     font-size: 3rem;
     font-weight: 800;
-    color: #FCD2D1;
+    color: white;
 
     transition: bottom 0.1s ease-in-out;
 }
@@ -97,24 +97,26 @@ main{
     font-size: clamp(0.5rem, 4vh, 3rem);
     padding: 1rem;
     margin: 2rem 0;
-    color: coral;
+    color: #252A34;
 }
 
 #scores{
     position: relative;
     bottom: 2rem;
     font-size: clamp(0.5rem, 4vh, 3rem);
-    color: #FF5C58;
+    color: #252A34;
     margin-bottom: 1rem;
 }
 
 #btn{
+    display: none;
     padding: 1rem;
     border: none;
     border-radius: 1rem;
     font-family: 'DM Mono', monospace;
     font-size: 2rem;
-    background-color: lightpink;
+    background-color: #08D9D6;
+    font-weight: bold;
     cursor: pointer;
 }
 
@@ -166,11 +168,10 @@ main{
 #info-card{
     display: none;
     position: absolute;
-    top: 100px;
-    left: 50%;
-    transform: translate(-50%, 0);
+    bottom: 20px;
+    right: 20px;
 
-    background-color: #FF2E63;
+    background-color: #08D9D6;
     width: fit-content;
     height: fit-content;
 
@@ -182,7 +183,7 @@ main{
 
     column-gap: 10px;
     padding: 1rem 2rem;
-    color: white;
+    color: #252A34;
     font-size: 2rem;
 }
 
