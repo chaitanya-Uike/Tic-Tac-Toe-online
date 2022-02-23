@@ -218,12 +218,12 @@ function clicked(box) {
             box.innerText = "O";
         }
 
-        socket.emit("played", roomId, box.id)
+        socket.emit("played", box.id)
         check()
 
         if (won) {
             document.getElementById("btn").style.display = "block"
-            socket.emit("won", roomId)
+            socket.emit("won")
             return
         }
 
@@ -233,11 +233,11 @@ function clicked(box) {
 
         if (count >= 9) {
             alerts.innerText = "It's a Tie";
-            socket.emit("tie", roomId)
+            socket.emit("tie")
             return
         }
 
-        socket.emit("turn-change", roomId)
+        socket.emit("turn-change")
     }
 }
 
@@ -251,7 +251,7 @@ Array.from(cards).forEach(card => {
 
 document.getElementById("btn").addEventListener("click", () => {
     resetBoard()
-    socket.emit("clear-board", roomId)
+    socket.emit("clear-board")
 });
 
 document.getElementById("reset").addEventListener("click", function () {
@@ -259,5 +259,5 @@ document.getElementById("reset").addEventListener("click", function () {
     p2 = 0;
     document.getElementById("scores").innerText = "0 / 0";
     resetBoard();
-    socket.emit("reset", roomId)
+    socket.emit("reset")
 })

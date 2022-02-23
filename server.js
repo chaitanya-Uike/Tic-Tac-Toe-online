@@ -68,33 +68,36 @@ io.on("connection", socket => {
         if (rooms[roomId].length == 2) {
             io.to(roomId).emit("game-started", rooms[roomId])
         }
+
+        socket.on("played", (move) => {
+            socket.to(roomId).emit("register-move", move)
+        })
+
+        socket.on("turn-change", () => {
+            io.to(roomId).emit("change-player")
+        })
+
+        socket.on("won", () => {
+            socket.to(roomId).emit("opponent-won")
+        })
+
+        socket.on("tie", () => {
+            socket.to(roomId).emit("match-tied")
+        })
+
+        socket.on("clear-board", () => {
+            socket.to(roomId).emit("clear")
+        })
+
+        socket.on("reset", () => {
+            socket.to(roomId).emit("reset-game")
+        })
+
+        // socket.on("disconnected")
     })
 
     socket.on("approval", (approved, socketId) => {
         io.to(socketId).emit("enter-room", approved)
     })
 
-    socket.on("played", (roomId, move) => {
-        socket.to(roomId).emit("register-move", move)
-    })
-
-    socket.on("turn-change", (roomId) => {
-        io.to(roomId).emit("change-player")
-    })
-
-    socket.on("won", (roomId) => {
-        socket.to(roomId).emit("opponent-won")
-    })
-
-    socket.on("tie", roomId => {
-        socket.to(roomId).emit("match-tied")
-    })
-
-    socket.on("clear-board", roomId => {
-        socket.to(roomId).emit("clear")
-    })
-
-    socket.on("reset", roomId => {
-        socket.to(roomId).emit("reset-game")
-    })
 })
