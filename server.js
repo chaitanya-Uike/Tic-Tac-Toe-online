@@ -74,8 +74,15 @@ io.on("connection", socket => {
         io.to(socketId).emit("enter-room", approved)
     })
 
-    socket.on("turn-change", (roomId, move) => {
+    socket.on("played", (roomId, move) => {
         socket.to(roomId).emit("register-move", move)
+    })
+
+    socket.on("turn-change", (roomId) => {
         io.to(roomId).emit("change-player")
+    })
+
+    socket.on("won", (roomId) => {
+        socket.to(roomId).emit("opponent-won")
     })
 })

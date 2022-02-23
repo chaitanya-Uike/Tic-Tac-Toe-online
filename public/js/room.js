@@ -51,6 +51,12 @@ socket.on("change-player", () => {
     play()
 })
 
+socket.on("opponent-won", () => {
+    alerts.innerText = `${opponent} won !`;
+    p2++;
+    document.getElementById("scores").innerText = `${p1} / ${p2}`;
+})
+
 function play() {
     // multiply by one to make it int
     if (playersList[turnFlag * 1] == username) {
@@ -166,16 +172,9 @@ function check() {
         won = true;
 
     if (won) {
-        if (!yourTurn) {
-            alerts.innerText = `${opponent} won !`;
-            p2++;
-            document.getElementById("scores").innerText = `${p1} / ${p2}`;
-        }
-        else {
-            alerts.innerText = "you won !";
-            p1++;
-            document.getElementById("scores").innerText = `${p1} / ${p2}`;
-        }
+        alerts.innerText = "you won !";
+        p1++;
+        document.getElementById("scores").innerText = `${p1} / ${p2}`;
     }
 }
 
@@ -199,6 +198,15 @@ function clicked(box) {
         else {
             box.innerText = "O";
         }
+
+        socket.emit("played", roomId, box.id)
+        check()
+
+        if (won) {
+            socket.emit("won", roomId)
+            return
+        }
+
         yourTurn = !yourTurn
 
         count++;
@@ -207,9 +215,7 @@ function clicked(box) {
             alerts.innerText = "It's a Tie";
         }
 
-        socket.emit("turn-change", roomId, box.id)
-
-        check();
+        socket.emit("turn-change", roomId)
     }
 }
 
