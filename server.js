@@ -73,4 +73,9 @@ io.on("connection", socket => {
     socket.on("approval", (approved, socketId) => {
         io.to(socketId).emit("enter-room", approved)
     })
+
+    socket.on("turn-change", (roomId, move) => {
+        socket.to(roomId).emit("register-move", move)
+        io.to(roomId).emit("change-player")
+    })
 })
